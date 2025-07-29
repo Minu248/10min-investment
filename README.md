@@ -54,6 +54,22 @@ npm run dev
 2. `sql/schema.sql` 파일의 내용을 Supabase SQL 편집기에서 실행합니다.
 3. 환경 변수를 설정합니다.
 
+## Storage 설정
+
+1. Supabase 대시보드 → Storage에서 새 버킷을 생성합니다.
+2. 버킷 이름: `podcasts`
+3. 공개 액세스 설정: `true` (팟캐스트 파일 공개 접근 허용)
+4. RLS 정책 설정:
+   ```sql
+   -- 공개 읽기 정책
+   CREATE POLICY "Public read access" ON storage.objects
+     FOR SELECT USING (bucket_id = 'podcasts');
+   
+   -- 인증된 사용자 쓰기 정책
+   CREATE POLICY "Authenticated users can upload" ON storage.objects
+     FOR INSERT WITH CHECK (bucket_id = 'podcasts' AND auth.role() = 'authenticated');
+   ```
+
 ## 크론 작업
 
 팟캐스트 자동 생성은 Vercel Cron Jobs를 통해 `app/api/cron/generate-podcast/route.ts` 엔드포인트를 호출합니다.

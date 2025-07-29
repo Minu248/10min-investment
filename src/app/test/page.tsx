@@ -103,8 +103,19 @@ export default function TestPage() {
                     </p>
                     {podcast.summary_text && (
                       <p className="text-sm text-gray-700 mt-2">
-                        요약: {podcast.summary_text}
+                        요약: {podcast.summary_text.substring(0, 100)}...
                       </p>
+                    )}
+                    {podcast.audio_url && (
+                      <div className="mt-3">
+                        <audio controls className="w-full">
+                          <source src={podcast.audio_url} type="audio/mpeg" />
+                          Your browser does not support the audio element.
+                        </audio>
+                        <p className="text-xs text-green-600 mt-1">
+                          🎵 오디오 재생 가능
+                        </p>
+                      </div>
                     )}
                     <p className="text-xs text-gray-500 mt-2">
                       ID: {podcast.id}
