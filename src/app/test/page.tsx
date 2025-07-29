@@ -13,19 +13,17 @@ export default function TestPage() {
 
   const testSupabaseConnection = async () => {
     try {
-      // Supabase 연결 테스트
-      const { data, error } = await supabase
-        .from('podcasts')
-        .select('*')
-        .limit(5)
+      // API를 통해 Supabase 연결 테스트
+      const response = await fetch('/api/podcasts')
+      const result = await response.json()
 
-      if (error) {
-        setStatus(`연결 오류: ${error.message}`)
-        console.error('Supabase error:', error)
+      if (!response.ok) {
+        setStatus(`연결 오류: ${result.error}`)
+        console.error('API error:', result.error)
       } else {
         setStatus('Supabase 연결 성공!')
-        setPodcasts(data || [])
-        console.log('Podcasts data:', data)
+        setPodcasts(result.podcasts || [])
+        console.log('Podcasts data:', result.podcasts)
       }
     } catch (error) {
       setStatus(`예상치 못한 오류: ${error}`)
@@ -44,13 +42,18 @@ export default function TestPage() {
         duration_seconds: 600
       }
 
-      const { data, error } = await supabase
-        .from('podcasts')
-        .insert([testPodcast])
-        .select()
+      const response = await fetch('/api/podcasts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(testPodcast),
+      })
 
-      if (error) {
-        setStatus(`데이터 삽입 오류: ${error.message}`)
+      const result = await response.json()
+
+      if (!response.ok) {
+        setStatus(`데이터 삽입 오류: ${result.error}`)
       } else {
         setStatus('테스트 팟캐스트 추가 성공!')
         testSupabaseConnection() // 목록 새로고침
