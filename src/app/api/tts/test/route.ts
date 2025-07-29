@@ -1,0 +1,59 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { GoogleGenerativeAI } from '@google/generative-ai'
+
+export async function GET(request: NextRequest) {
+  try {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY is not configured')
+    }
+
+    // Gemini 2.5 Flash 네이티브 오디오 모델 초기화
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-2.5-flash-preview-native-audio-dialog"
+    })
+
+    // 간단한 테스트 스크립트
+    const testScript = `
+    안녕하세요, 투린이 여러분! 
+    오늘은 간단한 테스트를 위해 짧은 팟캐스트를 만들어보겠습니다.
+    이 음성이 잘 들리시나요?
+    `
+
+    console.log('Testing TTS with Gemini 2.5 Flash Native Audio...')
+
+    // 오디오 생성
+    const result = await model.generateContent(testScript)
+    const response = await result.response
+
+    // 오디오 데이터 확인
+    const audioData = (response as any).audio
+    if (!audioData) {
+      return NextResponse.json({
+        status: 'error',
+        message: 'No audio data generated',
+        model: 'gemini-2.5-flash-preview-native-audio-dialog'
+      })
+    }
+
+    return NextResponse.json({
+      status: 'success',
+      message: 'TTS test successful',
+      audioDataLength: audioData.length,
+      model: 'gemini-2.5-flash-preview-native-audio-dialog'
+    })
+
+  } catch (error) {
+    console.error('TTS test error:', error)
+    
+    return NextResponse.json(
+      {
+        status: 'error',
+        message: 'TTS test failed',
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      },
+      { status: 500 }
+    )
+  }
+} 

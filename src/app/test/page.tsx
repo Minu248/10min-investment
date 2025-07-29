@@ -106,6 +106,9 @@ export default function TestPage() {
                         요약: {podcast.summary_text.substring(0, 100)}...
                       </p>
                     )}
+                    <p className="text-xs text-blue-600 mt-1">
+                      Audio URL: {podcast.audio_url || '없음'}
+                    </p>
                     {podcast.audio_url && (
                       <div className="mt-3">
                         <audio controls className="w-full">
@@ -116,6 +119,11 @@ export default function TestPage() {
                           🎵 오디오 재생 가능
                         </p>
                       </div>
+                    )}
+                    {!podcast.audio_url && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        🎵 오디오 없음
+                      </p>
                     )}
                     <p className="text-xs text-gray-500 mt-2">
                       ID: {podcast.id}

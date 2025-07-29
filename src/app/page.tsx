@@ -70,18 +70,18 @@ export default function Home() {
         </a>
 
         <a
-          href="#"
+          href="/api/tts/test"
           className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            팟캐스트 생성{" "}
+            TTS 테스트{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
           </h2>
           <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            TTS를 통해 자연스러운 음성으로 변환합니다.
+            Gemini 2.5 Flash TTS 기능을 테스트합니다.
           </p>
         </a>
 
