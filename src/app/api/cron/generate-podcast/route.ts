@@ -33,7 +33,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Step 3: Call Gemini API for Summary
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" })
+    // Gemini 2.5 Flash: 최고의 가격 대비 성능, 다양한 기능 제공
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" })
     
     const prompt = `
     다음은 오늘의 주요 금융 뉴스입니다. 초보 투자자들이 이해하기 쉽게 10분 분량의 팟캐스트 스크립트로 요약해주세요.
