@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import { supabase } from '@/lib/supabaseClient'
+import { createClient } from '@supabase/supabase-js'
+
+// 서버 사이드용 Supabase 클라이언트 (서비스 롤 키 사용)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
 export async function GET(request: NextRequest) {
   try {
@@ -74,7 +79,7 @@ export async function GET(request: NextRequest) {
       duration_seconds: 600 // 10분 = 600초
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('podcasts')
       .insert([podcastData])
       .select()
