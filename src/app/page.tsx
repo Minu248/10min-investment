@@ -54,18 +54,18 @@ export default function Home() {
         </a>
 
         <a
-          href="#"
+          href="/api/cron/generate-podcast"
           className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            AI 요약{" "}
+            팟캐스트 생성{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
           </h2>
           <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            복잡한 금융 뉴스를 10분 분량으로 요약합니다.
+            AI로 금융 뉴스를 요약하여 팟캐스트를 생성합니다.
           </p>
         </a>
 
