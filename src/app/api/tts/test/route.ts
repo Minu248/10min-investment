@@ -7,10 +7,10 @@ export async function GET(request: NextRequest) {
       throw new Error('GEMINI_API_KEY is not configured')
     }
 
-    // Gemini 2.5 Flash 네이티브 오디오 모델 초기화
+    // Gemini 2.5 Flash TTS 모델 초기화
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash-preview-native-audio-dialog"
+      model: "gemini-2.5-flash-preview-tts"
     })
 
     // 간단한 테스트 스크립트
