@@ -15,10 +15,10 @@ export async function POST(request: NextRequest) {
       throw new Error('GEMINI_API_KEY is not configured')
     }
 
-    // Gemini 2.5 Flash 네이티브 오디오 모델 초기화
+    // Gemini 2.5 Flash TTS 모델 초기화
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash-preview-native-audio-dialog"
+      model: "gemini-2.5-flash-preview-tts"
     })
 
     // 2인 화자 팟캐스트 스크립트 구성
@@ -39,10 +39,15 @@ export async function POST(request: NextRequest) {
     - 약 10분 분량으로 적절한 속도 조절
     `
 
-    console.log('Generating audio with Gemini 2.5 Flash Native Audio...')
+    console.log('Generating audio with Gemini 2.5 Flash TTS...')
 
-    // 오디오 생성
-    const result = await model.generateContent(audioPrompt)
+    // 오디오 생성 (TTS 모델은 오디오만 출력)
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: audioPrompt }] }],
+      generationConfig: {
+        responseMimeType: "audio/mpeg"
+      }
+    })
     const response = await result.response
 
     // 오디오 데이터 추출 (실험적 API이므로 타입 체크 우회)

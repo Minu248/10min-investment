@@ -20,10 +20,16 @@ export async function GET(request: NextRequest) {
     이 음성이 잘 들리시나요?
     `
 
-    console.log('Testing TTS with Gemini 2.5 Flash Native Audio...')
+    console.log('Testing TTS with Gemini 2.5 Flash TTS...')
 
-    // 오디오 생성
-    const result = await model.generateContent(testScript)
+    // 오디오 생성 (TTS 모델은 오디오만 출력)
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: testScript }] }],
+      generationConfig: {
+        responseMimeType: "audio/mpeg"
+      }
+    })
+    
     const response = await result.response
 
     // 오디오 데이터 확인
@@ -32,7 +38,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         status: 'error',
         message: 'No audio data generated',
-        model: 'gemini-2.5-flash-preview-native-audio-dialog'
+        model: 'gemini-2.5-flash-preview-tts'
       })
     }
 
@@ -40,7 +46,8 @@ export async function GET(request: NextRequest) {
       status: 'success',
       message: 'TTS test successful',
       audioDataLength: audioData.length,
-      model: 'gemini-2.5-flash-preview-native-audio-dialog'
+      model: 'gemini-2.5-flash-preview-tts',
+      mimeType: 'audio/mpeg'
     })
 
   } catch (error) {
