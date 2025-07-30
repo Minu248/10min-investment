@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
         speaker2: "네, 오늘도 유용한 투자 정보를 전해드리겠습니다.",
         content: summaryText
       },
-      audio_url: null, // 나중에 TTS로 생성된 오디오 URL로 업데이트
+      audio_url: null, // TTS 구현 후 업데이트 예정
       duration_seconds: 600 // 10분 = 600초
     }
 
@@ -89,71 +89,20 @@ export async function GET(request: NextRequest) {
       throw new Error(`Database insertion failed: ${error.message}`)
     }
 
-    // Step 5: Generate Audio with TTS
-    console.log('Generating audio for podcast:', data[0].id)
-    
-    try {
-      const ttsResponse = await fetch(`${request.nextUrl.origin}/api/tts/generate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          podcastId: data[0].id,
-          script: summaryText
-        }),
-      })
+    console.log('Podcast generated successfully:', data[0].id)
 
-      const ttsResult = await ttsResponse.json()
-      
-      if (ttsResult.status === 'success') {
-        console.log('Audio generated successfully:', ttsResult.audio.url)
-        
-        return NextResponse.json({
-          status: 'success',
-          message: 'Podcast with audio generated successfully',
-          podcast: {
-            id: data[0].id,
-            title: data[0].title,
-            summary_length: summaryText.length,
-            audio_url: ttsResult.audio.url,
-            generated_at: new Date().toISOString()
-          },
-          summary_preview: summaryText.substring(0, 200) + '...',
-          audio: ttsResult.audio
-        })
-      } else {
-        console.warn('TTS generation failed, returning text-only podcast')
-        
-        return NextResponse.json({
-          status: 'success',
-          message: 'Podcast generated successfully (audio generation failed)',
-          podcast: {
-            id: data[0].id,
-            title: data[0].title,
-            summary_length: summaryText.length,
-            generated_at: new Date().toISOString()
-          },
-          summary_preview: summaryText.substring(0, 200) + '...',
-          tts_error: ttsResult.error
-        })
-      }
-    } catch (ttsError) {
-      console.error('TTS generation error:', ttsError)
-      
-      return NextResponse.json({
-        status: 'success',
-        message: 'Podcast generated successfully (audio generation failed)',
-        podcast: {
-          id: data[0].id,
-          title: data[0].title,
-          summary_length: summaryText.length,
-          generated_at: new Date().toISOString()
-        },
-        summary_preview: summaryText.substring(0, 200) + '...',
-        tts_error: 'TTS generation failed'
-      })
-    }
+    return NextResponse.json({
+      status: 'success',
+      message: 'Podcast generated successfully',
+      podcast: {
+        id: data[0].id,
+        title: data[0].title,
+        summary_length: summaryText.length,
+        generated_at: new Date().toISOString()
+      },
+      summary_preview: summaryText.substring(0, 200) + '...',
+      note: 'TTS 기능은 추후 구현 예정'
+    })
 
   } catch (error) {
     console.error('Cron job error:', error)
