@@ -2,12 +2,6 @@
   "name": "10min-investment",
   "version": "0.1.0",
   "private": true,
-  "description": "자동으로 금융 뉴스를 수집하고 요약하여 10분 팟캐스트로 제공하는 서비스",
-  "author": "Minu248",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Minu248/10min-investment.git"
-  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -15,8 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
-    "@supabase/supabase-js": "^2.53.0",
     "next": "15.4.4",
     "react": "19.1.0",
     "react-dom": "19.1.0"
