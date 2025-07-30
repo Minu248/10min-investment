@@ -1,17 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { TextToSpeechClient } from '@google-cloud/text-to-speech'
 
 export async function GET(request: NextRequest) {
   try {
-    if (!process.env.GEMINI_API_KEY) {
-      throw new Error('GEMINI_API_KEY is not configured')
+    if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+      throw new Error('GOOGLE_APPLICATION_CREDENTIALS is not configured')
     }
 
-    // Gemini 2.5 Flash TTS 모델 초기화
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash-preview-tts"
-    })
+    // Google Cloud Text-to-Speech 클라이언트 초기화
+    const client = new TextToSpeechClient()
 
     // 간단한 테스트 스크립트
     const testScript = `
@@ -20,34 +17,45 @@ export async function GET(request: NextRequest) {
     이 음성이 잘 들리시나요?
     `
 
-    console.log('Testing TTS with Gemini 2.5 Flash TTS...')
+    console.log('Testing Google Cloud Text-to-Speech...')
 
-    // 오디오 생성 (TTS 모델은 오디오만 출력)
-    const result = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: testScript }] }],
-      generationConfig: {
-        responseMimeType: "audio/mpeg"
+    // TTS 요청 구성
+    const request = {
+      input: { text: testScript },
+      voice: {
+        languageCode: 'ko-KR',
+        name: 'ko-KR-Neural2-A', // 한국어 여성 음성
+        ssmlGender: 'FEMALE' as const
+      },
+      audioConfig: {
+        audioEncoding: 'MP3' as const,
+        speakingRate: 0.9, // 약간 느리게
+        pitch: 0.0,
+        volumeGainDb: 0.0
       }
-    })
-    
-    const response = await result.response
+    }
 
-    // 오디오 데이터 확인
-    const audioData = (response as any).audio
-    if (!audioData) {
+    // TTS API 호출
+    const [response] = await client.synthesizeSpeech(request)
+    
+    if (!response.audioContent) {
       return NextResponse.json({
         status: 'error',
         message: 'No audio data generated',
-        model: 'gemini-2.5-flash-preview-tts'
+        service: 'Google Cloud Text-to-Speech'
       })
     }
+
+    // 오디오 데이터를 Buffer로 변환
+    const audioBuffer = Buffer.from(response.audioContent)
 
     return NextResponse.json({
       status: 'success',
       message: 'TTS test successful',
-      audioDataLength: audioData.length,
-      model: 'gemini-2.5-flash-preview-tts',
-      mimeType: 'audio/mpeg'
+      audioDataLength: audioBuffer.length,
+      service: 'Google Cloud Text-to-Speech',
+      mimeType: 'audio/mp3',
+      bufferSize: audioBuffer.byteLength
     })
 
   } catch (error) {

@@ -41,26 +41,47 @@ export async function POST(request: NextRequest) {
 
     console.log('Generating audio with Gemini 2.5 Flash TTS...')
 
-    // 오디오 생성 (TTS 모델은 오디오만 출력)
+    // 오디오 생성 (TTS 모델은 기본적으로 오디오만 출력)
     const result = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: audioPrompt }] }],
-      generationConfig: {
-        responseMimeType: "audio/mpeg"
-      }
+      contents: [{ role: "user", parts: [{ text: audioPrompt }] }]
+      // TTS 모델은 기본적으로 오디오만 출력하므로 별도 설정 불필요
     })
     const response = await result.response
 
-    // 오디오 데이터 추출 (실험적 API이므로 타입 체크 우회)
-    const audioData = (response as any).audio
-    if (!audioData) {
-      throw new Error('No audio data generated')
+    // 오디오 데이터 추출 (베테랑 개발자 방식 적용)
+    console.log('TTS Response structure:', JSON.stringify(response, null, 2))
+    
+    // response에서 오디오 데이터 찾기
+    let audioBuffer: Buffer | null = null
+    
+    // 방법 1: parts 배열에서 찾기
+    const responseData = response as any
+    if (responseData.parts && responseData.parts.length > 0) {
+      const audioPart = responseData.parts[0]
+      if (audioPart.blob && audioPart.blob.data) {
+        audioBuffer = Buffer.from(audioPart.blob.data, 'base64')
+      }
+    }
+    
+    // 방법 2: 직접 audio 속성에서 찾기
+    if (!audioBuffer && responseData.audio) {
+      audioBuffer = Buffer.from(responseData.audio, 'base64')
+    }
+    
+    // 방법 3: response 자체가 오디오 데이터인 경우
+    if (!audioBuffer && typeof response === 'string') {
+      audioBuffer = Buffer.from(response, 'base64')
+    }
+    
+    if (!audioBuffer) {
+      throw new Error('No audio data found in response')
     }
 
     // 오디오 파일을 Supabase Storage에 업로드
     const fileName = `podcast-${podcastId}-${Date.now()}.mp3`
     const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
       .from('podcasts')
-      .upload(fileName, audioData, {
+      .upload(fileName, audioBuffer, {
         contentType: 'audio/mpeg',
         cacheControl: '3600'
       })
