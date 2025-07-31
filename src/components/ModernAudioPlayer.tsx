@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useAudioStore } from '@/store/audioStore'
 import { Podcast } from '@/lib/supabase/client'
+import AudioVisualization from './AudioVisualization'
 
 interface ModernAudioPlayerProps {
   podcast: Podcast
@@ -220,22 +221,13 @@ export default function ModernAudioPlayer({ podcast }: ModernAudioPlayerProps) {
           </button>
         </div>
 
-        {/* 앨범 아트 */}
+        {/* 오디오 시각화 */}
         <div className="flex justify-center mb-6">
-          <div className="relative">
-            <div className="w-48 h-48 rounded-full bg-gradient-to-br from-rose-300 via-orange-300 to-purple-400 p-1 shadow-2xl">
-              <div className="w-full h-full rounded-full bg-gradient-to-br from-orange-400 via-red-400 to-purple-500 flex items-center justify-center relative overflow-hidden">
-                {/* 중앙 흰색 원 */}
-                <div className="w-4 h-4 bg-white rounded-full absolute"></div>
-                
-                {/* 그라데이션 오버레이 */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 rounded-full"></div>
-                
-                {/* 글로우 효과 */}
-                <div className="absolute -inset-2 bg-gradient-to-br from-rose-300 via-orange-300 to-purple-400 rounded-full opacity-30 blur-lg animate-pulse"></div>
-              </div>
-            </div>
-          </div>
+          <AudioVisualization 
+            audioElement={audioRef.current} 
+            isPlaying={isPlaying}
+            size={192}
+          />
         </div>
 
         {/* 곡 정보 */}
