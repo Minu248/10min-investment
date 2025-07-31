@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import { Podcast } from '@/lib/supabase/client'
 
+export type RepeatMode = 'none' | 'all' | 'one'
+
 interface AudioState {
   // 현재 재생 중인 팟캐스트
   currentPodcast: Podcast | null
@@ -16,6 +18,12 @@ interface AudioState {
   audioElement: HTMLAudioElement | null
   // 오디오 엘리먼트 초기화 상태
   isAudioInitialized: boolean
+  // 좋아요 상태
+  isLiked: boolean
+  // 반복 모드
+  repeatMode: RepeatMode
+  // 플레이어 최소화 상태
+  isMinimized: boolean
   
   // 액션들
   setCurrentPodcast: (podcast: Podcast | null) => void
@@ -24,6 +32,9 @@ interface AudioState {
   setDuration: (duration: number) => void
   setVolume: (volume: number) => void
   setAudioElement: (element: HTMLAudioElement | null) => void
+  setIsLiked: (liked: boolean) => void
+  setRepeatMode: (mode: RepeatMode) => void
+  setIsMinimized: (minimized: boolean) => void
 }
 
 export const useAudioStore = create<AudioState>((set, get) => ({
@@ -34,6 +45,9 @@ export const useAudioStore = create<AudioState>((set, get) => ({
   volume: 0.7,
   audioElement: null,
   isAudioInitialized: false,
+  isLiked: false,
+  repeatMode: 'none',
+  isMinimized: false,
 
   setCurrentPodcast: (podcast) => {
     set({ currentPodcast: podcast })
@@ -63,5 +77,11 @@ export const useAudioStore = create<AudioState>((set, get) => ({
     if (element && volume !== undefined) {
       element.volume = volume
     }
-  }
+  },
+
+  setIsLiked: (liked) => set({ isLiked: liked }),
+
+  setRepeatMode: (mode) => set({ repeatMode: mode }),
+
+  setIsMinimized: (minimized) => set({ isMinimized: minimized })
 })) 
