@@ -13,7 +13,7 @@ export default function PodcastCard({ podcast }: PodcastCardProps) {
     currentPodcast, 
     setCurrentPodcast, 
     isPlaying,
-    setIsPlaying,
+
     audioElement,
     isAudioInitialized
   } = useAudioStore()

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { supabase } from '@/lib/supabase/client'
+import { supabase, Podcast } from '@/lib/supabase/client'
 
 export default function TestAudioPage() {
   const [audioUrl, setAudioUrl] = useState('')
@@ -11,7 +11,7 @@ export default function TestAudioPage() {
   const audioRef = useRef<HTMLAudioElement>(null)
 
   // 데이터베이스에서 팟캐스트 목록 가져오기
-  const [podcasts, setPodcasts] = useState<any[]>([])
+  const [podcasts, setPodcasts] = useState<Podcast[]>([])
   const [loadingPodcasts, setLoadingPodcasts] = useState(false)
 
   const fetchPodcasts = async () => {

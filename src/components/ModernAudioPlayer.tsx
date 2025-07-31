@@ -18,7 +18,7 @@ export default function ModernAudioPlayer({ podcast }: ModernAudioPlayerProps) {
     isPlaying,
     currentTime,
     duration,
-    volume,
+
     isLiked,
     repeatMode,
     isMinimized,
