@@ -40,8 +40,13 @@ export default function ModernAudioPlayer({ podcast }: ModernAudioPlayerProps) {
       // 오디오 URL 설정
       audioRef.current.src = podcast.audio_url
       audioRef.current.load()
+      
+      // 새로운 팟캐스트가 로드되면 재생 상태 초기화
+      setIsPlaying(false)
+      setCurrentTime(0)
+      setDuration(0)
     }
-  }, [podcast, setAudioElement, setCurrentPodcast])
+  }, [podcast, setAudioElement, setCurrentPodcast, setIsPlaying, setCurrentTime, setDuration])
 
   const formatTime = (seconds: number) => {
     if (isNaN(seconds)) return '0:00'
