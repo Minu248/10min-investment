@@ -8,6 +8,9 @@ import { uploadAudioFile, getAudioDuration } from '@/lib/supabase/storage'
 export default function AdminPage() {
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
   const [formData, setFormData] = useState<CreatePodcastData>({
     title: '',
     summary: '',
@@ -24,8 +27,37 @@ export default function AdminPage() {
 
   // 페이지 로드 시 연결 상태 확인
   useEffect(() => {
-    checkConnection()
-  }, [])
+    if (isAuthenticated) {
+      checkConnection()
+    }
+  }, [isAuthenticated])
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    try {
+      const response = await fetch('/api/admin/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ password }),
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setIsAuthenticated(true)
+        setPasswordError('')
+      } else {
+        setPasswordError(result.message || '잘못된 암호입니다.')
+        setPassword('')
+      }
+    } catch (error) {
+      setPasswordError('서버 연결 오류가 발생했습니다.')
+      setPassword('')
+    }
+  }
 
   const checkConnection = async () => {
     setConnectionStatus('checking')
@@ -39,6 +71,60 @@ export default function AdminPage() {
       setConnectionStatus('failed')
       setMessage('연결 테스트 중 오류가 발생했습니다.')
     }
+  }
+
+  // 암호 입력 화면
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-xl">
+            <div className="text-center mb-6">
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">관리자 인증</h1>
+              <p className="text-sm text-gray-600">
+                관리자 페이지에 접근하려면 암호를 입력하세요
+              </p>
+            </div>
+            
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                  관리자 암호
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="암호를 입력하세요"
+                  required
+                />
+                {passwordError && (
+                  <p className="mt-2 text-sm text-red-600">{passwordError}</p>
+                )}
+              </div>
+              
+              <button
+                type="submit"
+                className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              >
+                로그인
+              </button>
+            </form>
+            
+            <div className="mt-6 text-center">
+              <button
+                onClick={() => router.push('/')}
+                className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                ← 홈으로 돌아가기
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,7 +238,19 @@ export default function AdminPage() {
     <main className="min-h-screen bg-gray-50 py-12">
       <div className="max-w-2xl mx-auto p-8">
         <div className="bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">팟캐스트 등록</h1>
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">팟캐스트 등록</h1>
+            <button
+              onClick={() => {
+                setIsAuthenticated(false)
+                setPassword('')
+                setPasswordError('')
+              }}
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm"
+            >
+              로그아웃
+            </button>
+          </div>
           
           {/* 연결 상태 표시 */}
           {connectionStatus && (

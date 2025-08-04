@@ -71,17 +71,6 @@ export default function HomePage() {
           <p className="text-sm text-gray-600">
             최신 재테크 팟캐스트를 들어보세요
           </p>
-          <div className="flex gap-2 justify-center mt-4">
-            <a
-              href="/admin"
-              className="inline-flex items-center px-3 py-1 bg-gray-800 text-white text-xs font-medium rounded-md hover:bg-gray-700 transition-colors"
-            >
-              <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-              </svg>
-              등록
-            </a>
-          </div>
         </div>
 
         {/* 로딩 상태 */}
