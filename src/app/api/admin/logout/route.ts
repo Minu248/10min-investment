@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { withAuth } from '@/lib/auth-middleware'
 
-async function logoutHandler(request: any) {
+async function logoutHandler() {
   return NextResponse.json({
     success: true,
     message: '로그아웃되었습니다.'

@@ -63,7 +63,6 @@ export function checkRateLimit(
   config: RateLimitConfig = { maxRequests: 5, windowMs: 15 * 60 * 1000 } // 15분에 5회
 ): { allowed: boolean; remaining: number; resetTime: number } {
   const now = Date.now()
-  const windowStart = now - config.windowMs
 
   // 기존 데이터 정리
   if (rateLimitStore[identifier] && rateLimitStore[identifier].resetTime < now) {

@@ -53,7 +53,7 @@ export default function AdminPage() {
         setPasswordError(result.message || '잘못된 암호입니다.')
         setPassword('')
       }
-    } catch (error) {
+    } catch {
       setPasswordError('서버 연결 오류가 발생했습니다.')
       setPassword('')
     }
@@ -67,7 +67,7 @@ export default function AdminPage() {
       if (!isConnected) {
         setMessage('Supabase 연결에 실패했습니다. 환경 변수와 설정을 확인해주세요.')
       }
-    } catch (error) {
+    } catch {
       setConnectionStatus('failed')
       setMessage('연결 테스트 중 오류가 발생했습니다.')
     }
@@ -150,10 +150,10 @@ export default function AdminPage() {
           duration
         }))
         setMessage('파일이 선택되었습니다. 재생 시간이 자동으로 감지되었습니다.')
-      } catch (error) {
+      } catch {
         setMessage('파일이 선택되었습니다. 재생 시간을 수동으로 입력해주세요.')
       }
-    } catch (error) {
+    } catch {
       setMessage('파일 선택 중 오류가 발생했습니다.')
     }
   }

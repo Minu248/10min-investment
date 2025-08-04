@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { checkRateLimit, getClientIP } from '@/lib/rate-limit'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { validateAuthRequest } from '@/lib/validation'
 import { logAuthAttempt, getRequestInfo } from '@/lib/logger'
 import { generateToken } from '@/lib/jwt'
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     let body
     try {
       body = await request.json()
-    } catch (parseError) {
+    } catch {
       logAuthAttempt({
         timestamp,
         ip,
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     let hashedAdminPassword: string
     try {
       hashedAdminPassword = getHashedAdminPassword()
-    } catch (error) {
+    } catch {
       logAuthAttempt({
         timestamp,
         ip,

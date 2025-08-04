@@ -41,7 +41,7 @@ export function validatePassword(password: string): ValidationResult {
   }
 }
 
-export function validateAuthRequest(body: any): ValidationResult {
+export function validateAuthRequest(body: unknown): ValidationResult {
   const errors: string[] = []
   
   if (!body || typeof body !== 'object') {
@@ -49,10 +49,12 @@ export function validateAuthRequest(body: any): ValidationResult {
     return { isValid: false, errors }
   }
   
-  if (!body.password) {
+  const authBody = body as { password?: unknown }
+  
+  if (!authBody.password) {
     errors.push('비밀번호 필드가 필요합니다.')
   } else {
-    const passwordValidation = validatePassword(body.password)
+    const passwordValidation = validatePassword(String(authBody.password))
     if (!passwordValidation.isValid) {
       errors.push(...passwordValidation.errors)
     }

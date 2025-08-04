@@ -5,7 +5,7 @@ export async function testSupabaseConnection() {
     console.log('🔍 Supabase 연결 테스트 시작...')
     
     // 1. 기본 연결 테스트
-    const { data, error } = await supabase.from('podcasts').select('count').limit(1)
+    const { error } = await supabase.from('podcasts').select('count').limit(1)
     
     if (error) {
       console.error('❌ 데이터베이스 연결 실패:', error)
@@ -15,7 +15,7 @@ export async function testSupabaseConnection() {
     console.log('✅ 데이터베이스 연결 성공')
     
     // 2. Storage 연결 테스트
-    const { data: storageData, error: storageError } = await supabase.storage
+    const { error: storageError } = await supabase.storage
       .from('podcast-audio')
       .list('', { limit: 1 })
     

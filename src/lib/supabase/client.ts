@@ -42,7 +42,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 // 연결 테스트 함수
 export async function testSupabaseConnection() {
   try {
-    const { data, error } = await supabase.from('podcasts').select('count').limit(1)
+    const { error } = await supabase.from('podcasts').select('count').limit(1)
     if (error) {
       console.error('Supabase connection test failed:', error)
       return false
