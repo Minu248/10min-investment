@@ -3,6 +3,7 @@ export interface ValidationResult {
   errors: string[]
 }
 
+// 일반 사용자 비밀번호 검증용 (현재 admin 로그인에서는 사용하지 않음)
 export function validatePassword(password: string): ValidationResult {
   const errors: string[] = []
   
@@ -49,7 +50,6 @@ export function validateAuthRequest(body: unknown): ValidationResult {
   if (!authBody.password) {
     errors.push('비밀번호 필드가 필요합니다.')
   } else {
-    // admin 로그인용 간단한 검증
     const password = String(authBody.password)
     
     if (!password) {

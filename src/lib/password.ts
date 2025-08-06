@@ -28,7 +28,6 @@ export function getHashedAdminPassword(): string {
     // 개발 환경에서만 임시 비밀번호 사용 (경고와 함께)
     console.warn('⚠️  개발 환경: 환경변수 ADMIN_PASSWORD가 설정되지 않아 임시 비밀번호를 사용합니다.')
     console.warn('⚠️  프로덕션 배포 전 반드시 ADMIN_PASSWORD 환경변수를 설정하세요.')
-    console.warn('⚠️  개발 환경 임시 비밀번호: admin')
     return '$2b$12$WcLEY7ePIEw9wjUxviUvren7nkrTqNDFby5FJsiQyya5LNafBjOWC'
   }
   
