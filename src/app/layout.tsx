@@ -13,12 +13,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "10분 재테크 | 매일 아침 9시 10분 경제 팟캐스트",
+  title: "10분 재테크 | 매일 아침 10분 요약 경제 팟캐스트",
   description: "가장 최신 재테크 소식을 핵심만 요약하여 전달드려요.",
   keywords: ["재테크", "경제", "팟캐스트", "투자", "금융", "10분"],
   authors: [{ name: "10분 재테크" }],
   creator: "10분 재테크",
   publisher: "10분 재테크",
+  icons: {
+    icon: '/favicon.png',
+    apple: '/icon.png',
+  },
   formatDetection: {
     email: false,
     address: false,
@@ -29,7 +33,7 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: "10분 재테크 | 매일 아침 9시 10분 경제 팟캐스트",
+    title: "10분 재테크 | 매일 아침 10분 요약 경제 팟캐스트",
     description: "가장 최신 재테크 소식을 핵심만 요약하여 전달드려요.",
     url: 'https://10min-investment.vercel.app',
     siteName: '10분 재테크',
@@ -37,18 +41,18 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/og-image.jpg',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: '10분 재테크 - 매일 아침 9시 10분 경제 팟캐스트',
+        alt: '10분 재테크 - 매일 아침 10분 요약 경제 팟캐스트',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: "10분 재테크 | 매일 아침 9시 10분 경제 팟캐스트",
+    title: "10분 재테크 | 매일 아침 10분 요약 경제 팟캐스트",
     description: "가장 최신 재테크 소식을 핵심만 요약하여 전달드려요.",
-    images: ['/og-image.jpg'],
+    images: ['/og-image.png'],
     creator: '@10min_investment',
   },
   robots: {
