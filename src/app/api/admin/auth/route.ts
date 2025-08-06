@@ -10,10 +10,8 @@ export async function POST(request: NextRequest) {
   const { ip, userAgent } = getRequestInfo(request)
   const timestamp = new Date().toISOString()
   
-  // 개발 환경에서만 환경변수 디버깅 실행
-  if (process.env.NODE_ENV !== 'production') {
-    debugEnvironmentVariables()
-  }
+  // 환경변수 디버깅 실행 (프로덕션에서도)
+  debugEnvironmentVariables()
   
   try {
     // Rate limiting 체크
@@ -90,7 +88,16 @@ export async function POST(request: NextRequest) {
     let hashedAdminPassword: string
     try {
       hashedAdminPassword = getHashedAdminPassword()
-    } catch {
+      console.log('=== 비밀번호 검증 디버깅 ===')
+      console.log('환경변수에서 읽은 해시 길이:', hashedAdminPassword.length)
+      console.log('해시가 올바른 형식인지:', hashedAdminPassword.startsWith('$2b$12$'))
+      console.log('해시에 큰따옴표가 포함되어 있는지:', hashedAdminPassword.includes('"'))
+      console.log('해시의 처음 20자:', hashedAdminPassword.substring(0, 20))
+      console.log('해시의 마지막 20자:', hashedAdminPassword.substring(hashedAdminPassword.length - 20))
+      console.log('원본 환경변수 값:', process.env.ADMIN_PASSWORD)
+      console.log('정리된 환경변수 값:', hashedAdminPassword)
+    } catch (error) {
+      console.error('관리자 비밀번호 가져오기 실패:', error)
       logAuthAttempt({
         timestamp,
         ip,
@@ -106,7 +113,9 @@ export async function POST(request: NextRequest) {
     }
     
     // 비밀번호 검증
+    console.log('입력된 비밀번호 길이:', password.length)
     const isPasswordValid = await verifyPassword(password, hashedAdminPassword)
+    console.log('비밀번호 검증 결과:', isPasswordValid)
     
     if (isPasswordValid) {
       // JWT 토큰 생성
