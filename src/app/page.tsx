@@ -67,9 +67,12 @@ export default function HomePage() {
       <div className="w-full max-w-md">
         {/* 헤더 */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">10분 재테크</h1>
-          <p className="text-sm text-gray-600">
-            최신 재테크 팟캐스트를 들어보세요
+          <h1 className="text-4xl font-bold text-gray-900 mb-6">10분 재테크</h1>
+          <p className="text-lg text-gray-600">
+            최신 재테크 소식을 빠르게 확인하세요.
+          </p>
+          <p className="text-lg text-gray-600">
+            매일 아침 9시 새로운 팟캐스트가 올라와요.
           </p>
         </div>
 
