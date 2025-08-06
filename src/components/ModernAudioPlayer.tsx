@@ -13,6 +13,8 @@ export default function ModernAudioPlayer({ podcast }: ModernAudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const progressRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
 
   const {
     isPlaying,
@@ -24,6 +26,73 @@ export default function ModernAudioPlayer({ podcast }: ModernAudioPlayerProps) {
     setDuration,
     setAudioElement
   } = useAudioStore()
+
+  // 토스트 알림 표시 함수
+  const showToastMessage = (message: string) => {
+    setToastMessage(message)
+    setShowToast(true)
+    setTimeout(() => setShowToast(false), 3000)
+  }
+
+  // URL 정리 함수 - 민감한 파라미터 제거
+  const getCleanShareUrl = () => {
+    const url = new URL(window.location.href)
+    // 민감할 수 있는 파라미터들 제거
+    const sensitiveParams = ['token', 'auth', 'key', 'secret', 'password']
+    sensitiveParams.forEach(param => url.searchParams.delete(param))
+    return url.toString()
+  }
+
+  // 클립보드에 복사하는 함수
+  const copyToClipboard = async (text: string) => {
+    if (!navigator.clipboard) {
+      // 클립보드 API를 지원하지 않는 경우 fallback
+      const textArea = document.createElement('textarea')
+      textArea.value = text
+      document.body.appendChild(textArea)
+      textArea.select()
+      try {
+        document.execCommand('copy')
+        showToastMessage('링크가 클립보드에 복사되었습니다!')
+      } catch (err) {
+        showToastMessage('클립보드 복사에 실패했습니다.')
+      }
+      document.body.removeChild(textArea)
+      return
+    }
+
+    try {
+      await navigator.clipboard.writeText(text)
+      showToastMessage('링크가 클립보드에 복사되었습니다!')
+    } catch (err) {
+      showToastMessage('클립보드 복사에 실패했습니다.')
+    }
+  }
+
+  // 공유하기 함수
+  const handleShare = async () => {
+    const cleanUrl = getCleanShareUrl()
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: podcast.title,
+          text: podcast.summary || '10분 재테크',
+          url: cleanUrl
+        })
+      } catch (err) {
+        // 사용자가 공유를 취소한 경우는 에러로 처리하지 않음
+        if ((err as Error).name !== 'AbortError') {
+          console.error('Share error:', err)
+          // 공유 실패 시 클립보드 복사로 fallback
+          await copyToClipboard(cleanUrl)
+        }
+      }
+    } else {
+      // Web Share API를 지원하지 않는 경우 클립보드에 복사
+      await copyToClipboard(cleanUrl)
+    }
+  }
 
   useEffect(() => {
     if (audioRef.current) {
@@ -122,7 +191,7 @@ export default function ModernAudioPlayer({ podcast }: ModernAudioPlayerProps) {
       />
 
       {/* 메인 플레이어 UI */}
-      <div className="bg-gradient-to-br from-blue-100 to-purple-90 backdrop-blur-sm rounded-3xl p-6 shadow-xl">
+      <div className="bg-gradient-to-br from-blue-100 to-purple-100 backdrop-blur-sm rounded-3xl p-6 shadow-xl">
         {/* 오디오 시각화 */}
         <div className="flex justify-center mb-6">
           <AudioVisualization 
@@ -187,20 +256,7 @@ export default function ModernAudioPlayer({ podcast }: ModernAudioPlayerProps) {
         {/* 공유하기 버튼 */}
         <div className="flex items-center justify-center">
           <button
-            onClick={() => {
-              if (navigator.share) {
-                navigator.share({
-                  title: podcast.title,
-                  text: podcast.summary || '10분 재테크',
-                  url: window.location.href
-                }).catch(console.error)
-              } else {
-                // Web Share API를 지원하지 않는 경우 클립보드에 복사
-                navigator.clipboard.writeText(window.location.href)
-                  .then(() => alert('링크가 클립보드에 복사되었습니다!'))
-                  .catch(console.error)
-              }
-            }}
+            onClick={handleShare}
             className="flex items-center gap-2 px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full transition-colors mt-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,6 +266,13 @@ export default function ModernAudioPlayer({ podcast }: ModernAudioPlayerProps) {
           </button>
         </div>
       </div>
+
+      {/* 토스트 알림 */}
+      {showToast && (
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300">
+          {toastMessage}
+        </div>
+      )}
     </>
   )
 }
